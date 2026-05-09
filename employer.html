@@ -10,8 +10,8 @@
     h1 { font-size: 1.5rem; color: #222; margin-bottom: 14px; text-align: center; }
     .card { background: white; border-radius: 12px; padding: 16px; max-width: 960px; margin: 0 auto 14px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
     .card h2 { margin-bottom: 10px; color: #333; font-size: 1rem; }
-    input { padding: 10px 12px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; width: 100%; -webkit-appearance: none; border-radius: 8px; }
-    .btn { padding: 12px 18px; font-size: 0.92rem; font-weight: bold; border: none; border-radius: 9px; cursor: pointer; display: inline-block; -webkit-appearance: none; }
+    input { padding: 10px 12px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; width: 100%; -webkit-appearance: none; min-height: 44px; }
+    .btn { padding: 12px 18px; font-size: 0.92rem; font-weight: bold; border: none; border-radius: 9px; cursor: pointer; display: inline-block; -webkit-appearance: none; min-height: 44px; }
     .btn-primary { background: #1565c0; color: white; }
     .btn-success { background: #2e7d32; color: white; }
     .btn-danger  { background: #e53935; color: white; font-size: 0.78rem; padding: 7px 12px; }
@@ -19,7 +19,7 @@
     .btn-full    { width: 100%; display: block; text-align: center; margin-top: 6px; }
     .hidden { display: none !important; }
     .tabs { display: flex; gap: 4px; flex-wrap: wrap; }
-    .tab-btn { padding: 9px 14px; border: none; border-radius: 8px 8px 0 0; cursor: pointer; font-size: 0.85rem; font-weight: bold; background: #dce3ea; color: #555; -webkit-appearance: none; }
+    .tab-btn { padding: 9px 14px; border: none; border-radius: 8px 8px 0 0; cursor: pointer; font-size: 0.85rem; font-weight: bold; background: #dce3ea; color: #555; -webkit-appearance: none; min-height: 44px; }
     .tab-btn.active { background: white; color: #1565c0; border-bottom: 3px solid #1565c0; }
     .tab-content { display: none; }
     .tab-content.active { display: block; }
@@ -40,15 +40,16 @@
     .pay-value { font-size: 1.2rem; font-weight: bold; color: #1565c0; }
     .pay-box.green .pay-value { color: #2e7d32; }
     .week-nav { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
-    .week-nav button { padding: 8px 12px; border-radius: 8px; border: 1px solid #ddd; background: white; cursor: pointer; font-size: 0.85rem; -webkit-appearance: none; }
+    .week-nav button { padding: 8px 12px; border-radius: 8px; border: 1px solid #ddd; background: white; cursor: pointer; font-size: 0.85rem; -webkit-appearance: none; min-height: 44px; }
     .week-label { font-weight: bold; color: #333; font-size: 0.85rem; flex: 1; text-align: center; }
     .filter-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; align-items: center; }
     .filter-row input { margin: 0; flex: 1; min-width: 120px; }
     .uname-result { margin-top: 10px; padding: 12px; background: #f0f7ff; border-radius: 10px; border: 1px solid #cde; }
-    .rate-row { display: flex; align-items: center; gap: 4px; }
-    .rate-input { width: 65px !important; margin: 0; padding: 5px 6px !important; font-size: 0.85rem !important; }
+    .rate-row { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+    .rate-input { width: 80px !important; margin: 0; padding: 8px 6px !important; font-size: 0.85rem !important; }
     #err, #add-err { color: #c00; font-size: 0.85rem; margin-top: 6px; }
     #copy-msg { font-size: 0.78rem; color: #2e7d32; margin-left: 6px; }
+    .table-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; }
   </style>
 </head>
 <body>
@@ -76,7 +77,7 @@
     <input type="tel" id="new-phone" placeholder="Phone Number"/>
     <div class="rate-row" style="margin-bottom:10px;">
       <span>$</span>
-      <input type="number" id="new-rate" placeholder="Hourly Rate" min="0" step="0.01" class="rate-input" style="width:100% !important;flex:1;"/>
+      <input type="number" id="new-rate" placeholder="Rate" min="0" step="0.01" class="rate-input"/>
       <span>/hr</span>
     </div>
     <button class="btn btn-success btn-full" onclick="addEmployee()">Generate Username &amp; Add</button>
@@ -240,15 +241,18 @@
       snap.forEach(function(d) {
         var e = d.data();
         var rv = (e.hourlyRate !== undefined) ? e.hourlyRate : "";
+        var eid = d.id;
+        var rateHtml = "<div class='rate-row'><span>$</span><input class='rate-input' type='number' min='0' step='0.01' value='" + rv.toString().replace(/'/g, "&#39;") + "' data-emp-id='" + eid.replace(/'/g, "&#39;") + "' onchange='updateRate(this.getAttribute(\"data-emp-id\"),this.value)'/><span>/hr</span></div>";
+        var btnHtml = "<button class='btn btn-danger' data-emp-id='" + eid.replace(/'/g, "&#39;") + "' onclick='removeEmployee(this.getAttribute(\"data-emp-id\"))'>Remove</button>";
         rows += "<tr>" +
-          "<td>" + e.name + "</td>" +
-          "<td><span class='badge'>" + e.username + "</span></td>" +
-          "<td>" + e.phone + "</td>" +
-          "<td><div class='rate-row'><span>$</span><input class='rate-input' type='number' min='0' step='0.01' value='" + rv + "' onchange="updateRate('" + d.id + "',this.value)"/><span>/hr</span></div></td>" +
-          "<td><button class='btn btn-danger' onclick="removeEmployee('" + d.id + "')">Remove</button></td>" +
+          "<td>" + (e.name || "").replace(/</g, "&lt;").replace(/>/g, "&gt;") + "</td>" +
+          "<td><span class='badge'>" + (e.username || "").replace(/</g, "&lt;").replace(/>/g, "&gt;") + "</span></td>" +
+          "<td>" + (e.phone || "").replace(/</g, "&lt;").replace(/>/g, "&gt;") + "</td>" +
+          "<td>" + rateHtml + "</td>" +
+          "<td>" + btnHtml + "</td>" +
           "</tr>";
       });
-      el.innerHTML = "<div style='overflow-x:auto;'><table><thead><tr><th>Name</th><th>Username</th><th>Phone</th><th>Rate</th><th></th></tr></thead><tbody>" + rows + "</tbody></table></div>";
+      el.innerHTML = "<div class='table-wrapper'><table><thead><tr><th>Name</th><th>Username</th><th>Phone</th><th>Rate</th><th></th></tr></thead><tbody>" + rows + "</tbody></table></div>";
     });
   }
 
@@ -317,8 +321,8 @@
             totalMins += mins;
             var otTxt = ot > 0 ? " (+" + ot.toFixed(1) + "h OT)" : "";
             rows += "<tr>" +
-              "<td>" + emp.name + "</td>" +
-              "<td><span class='badge'>" + u + "</span></td>" +
+              "<td>" + (emp.name || "").replace(/</g, "&lt;").replace(/>/g, "&gt;") + "</td>" +
+              "<td><span class='badge'>" + (u || "").replace(/</g, "&lt;").replace(/>/g, "&gt;") + "</span></td>" +
               "<td>$" + rate.toFixed(2) + "/hr</td>" +
               "<td>" + fmtH(mins) + otTxt + "</td>" +
               "<td>$" + rPay.toFixed(2) + "</td>" +
@@ -332,7 +336,7 @@
             "<div class='pay-box'><div class='pay-label'>Total Hours</div><div class='pay-value'>" + fmtH(totalMins) + "</div></div>" +
             "<div class='pay-box green'><div class='pay-label'>Gross Payroll</div><div class='pay-value'>$" + totalPay.toFixed(2) + "</div></div>";
           document.getElementById("payroll-table").innerHTML = rows
-            ? "<div style='overflow-x:auto;'><table><thead><tr><th>Employee</th><th>Username</th><th>Rate</th><th>Hours</th><th>Reg Pay</th><th>OT Pay</th><th>Gross</th></tr></thead><tbody>" + rows + "</tbody><tfoot><tr class='grand-row'><td colspan='3'>TOTAL</td><td>" + fmtH(totalMins) + "</td><td colspan='2'></td><td>$" + totalPay.toFixed(2) + "</td></tr></tfoot></table></div>"
+            ? "<div class='table-wrapper'><table><thead><tr><th>Employee</th><th>Username</th><th>Rate</th><th>Hours</th><th>Reg Pay</th><th>OT Pay</th><th>Gross</th></tr></thead><tbody>" + rows + "</tbody></table></div>"
             : "<p style='color:#aaa;font-style:italic;padding:10px'>No records this week.</p>";
           payrollData = csvRows;
         });
@@ -341,11 +345,8 @@
 
   function exportCSV() {
     if (!payrollData) return;
-    var csv = "Payroll - " + payrollWeekLabel + "
-
-" +
-      payrollData.map(function(r) { return r.map(function(v) { return '"' + v + '"'; }).join(","); }).join("
-");
+    var csv = "Payroll - " + payrollWeekLabel + "\n\n" +
+      payrollData.map(function(r) { return r.map(function(v) { return '"' + v.toString().replace(/"/g, '""') + '"'; }).join(","); }).join("\n");
     var blob = new Blob([csv], { type: "text/csv" });
     var url  = URL.createObjectURL(blob);
     var a    = document.createElement("a");
@@ -386,11 +387,11 @@
             var inT = r2.clockIn  ? r2.clockIn.toDate().toLocaleString()  : "-";
             var ouT = r2.clockOut ? r2.clockOut.toDate().toLocaleString() : "Active";
             var dur = (r2.durationMins != null) ? fmtH(r2.durationMins) : "-";
-            var nt  = r2.explanation ? "<div class='late-note'>Note: " + r2.explanation + "</div>" : "";
+            var nt  = r2.explanation ? "<div class='late-note'>Note: " + r2.explanation.replace(/</g, "&lt;").replace(/>/g, "&gt;") + "</div>" : "";
             tm += r2.durationMins || 0;
-            rows += "<tr><td>" + inT + nt + "</td><td>" + ouT + "</td><td>" + dur + "</td><td style='font-size:0.7rem;color:#888'>" + (r2.locationIn||"-") + "</td></tr>";
+            rows += "<tr><td>" + inT + nt + "</td><td>" + ouT + "</td><td>" + dur + "</td><td style='font-size:0.7rem;color:#888'>" + ((r2.locationIn || "-").replace(/</g, "&lt;").replace(/>/g, "&gt;")) + "</td></tr>";
           }
-          html += "<div class='emp-block'><div class='emp-name'>" + g.name + "</div><div class='emp-meta'><span class='badge'>" + g.username + "</span> | " + g.phone + "</div><div style='overflow-x:auto;'><table><thead><tr><th>In</th><th>Out</th><th>Duration</th><th>Location</th></tr></thead><tbody>" + rows + "</tbody><tfoot><tr class='total-row'><td colspan='2'>Total (" + g.recs.length + " sessions)</td><td>" + fmtH(tm) + "</td><td></td></tr></tfoot></table></div></div>";
+          html += "<div class='emp-block'><div class='emp-name'>" + (g.name || "").replace(/</g, "&lt;").replace(/>/g, "&gt;") + "</div><div class='emp-meta'><span class='badge'>" + (g.username || "").replace(/</g, "&lt;").replace(/>/g, "&gt;") + "</span> | " + (g.phone || "").replace(/</g, "&lt;").replace(/>/g, "&gt;") + "</div><div class='table-wrapper'><table style='font-size:0.75rem;'><thead><tr><th>Clock In</th><th>Clock Out</th><th>Duration</th><th>Location</th></tr></thead><tbody>" + rows + "</tbody></table></div></div>";
         }
         el.innerHTML = html;
       });
