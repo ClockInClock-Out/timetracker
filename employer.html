@@ -50,6 +50,7 @@
     #err, #add-err { color: #c00; font-size: 0.85rem; margin-top: 6px; }
     #copy-msg { font-size: 0.78rem; color: #2e7d32; margin-left: 6px; }
     .table-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .debug { color: #999; font-size: 0.75rem; margin-top: 8px; background: #f9f9f9; padding: 8px; border-radius: 4px; }
   </style>
 </head>
 <body>
@@ -60,6 +61,7 @@
   <input type="password" id="emp-pass" placeholder="Enter employer password"/>
   <button class="btn btn-primary btn-full" onclick="employerLogin()">Login</button>
   <div id="err"></div>
+  <div class="debug">Password: admin1234</div>
 </div>
 
 <div class="hidden" id="dashboard">
@@ -121,9 +123,6 @@
   </div>
 </div>
 
-<!-- Firebase Compat SDK - works on ALL browsers including old iOS -->
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <script>
   var EMPLOYER_PASSWORD = "admin1234";
   var weekOffset = 0;
@@ -131,15 +130,28 @@
   var payrollData = null;
   var payrollWeekLabel = "";
 
-  firebase.initializeApp({
-    apiKey: "AIzaSyAhZ3DfR8VWBAOPfqZ3wxynI587VOCq4T8",
-    authDomain: "clock-in-clock-out-74188.firebaseapp.com",
-    projectId: "clock-in-clock-out-74188",
-    storageBucket: "clock-in-clock-out-74188.firebasestorage.app",
-    messagingSenderId: "29359035149",
-    appId: "1:29359035149:web:c344dad550ed55173a9644"
-  });
-  db = firebase.firestore();
+  // Initialize Firebase
+  function initFirebase() {
+    if (typeof firebase === 'undefined') {
+      console.error('Firebase SDK not loaded');
+      return;
+    }
+
+    try {
+      firebase.initializeApp({
+        apiKey: "AIzaSyAhZ3DfR8VWBAOPfqZ3wxynI587VOCq4T8",
+        authDomain: "clock-in-clock-out-74188.firebaseapp.com",
+        projectId: "clock-in-clock-out-74188",
+        storageBucket: "clock-in-clock-out-74188.firebasestorage.app",
+        messagingSenderId: "29359035149",
+        appId: "1:29359035149:web:c344dad550ed55173a9644"
+      });
+      db = firebase.firestore();
+      console.log('Firebase initialized successfully');
+    } catch (err) {
+      console.error('Firebase init error:', err);
+    }
+  }
 
   function switchTab(name) {
     var names = ["employees","payroll","timelogs"];
@@ -156,10 +168,13 @@
 
   function employerLogin() {
     var pass = document.getElementById("emp-pass").value;
+    console.log('Login attempt with password length:', pass.length);
     if (pass !== EMPLOYER_PASSWORD) {
-      document.getElementById("err").textContent = "Incorrect password.";
+      document.getElementById("err").textContent = "Incorrect password. Expected: admin1234";
+      console.log('Password mismatch. Got: "' + pass + '" Expected: "' + EMPLOYER_PASSWORD + '"');
       return;
     }
+    console.log('Login successful');
     document.getElementById("login-card").classList.add("hidden");
     document.getElementById("dashboard").classList.remove("hidden");
     updateWeekLabel();
@@ -174,6 +189,7 @@
   }
 
   function ensureUnique(base, cb) {
+    if (!db) { cb(base); return; }
     db.collection("employees").where("username","==",base).get().then(function(snap) {
       if (snap.empty) { cb(base); return; }
       ensureUnique(base + "1", cb);
@@ -189,6 +205,7 @@
     if (!name)           { errEl.textContent = "Enter a name."; return; }
     if (!phone)          { errEl.textContent = "Enter a phone number."; return; }
     if (isNaN(rate)||rate<0) { errEl.textContent = "Enter a valid hourly rate."; return; }
+    if (!db) { errEl.textContent = "Database not connected"; return; }
     ensureUnique(genUsername(name), function(username) {
       db.collection("employees").add({
         name: name, phone: phone, username: username,
@@ -201,6 +218,8 @@
         document.getElementById("new-phone").value = "";
         document.getElementById("new-rate").value  = "";
         loadRoster();
+      }).catch(function(err) {
+        errEl.textContent = "Error adding employee: " + err.message;
       });
     });
   }
@@ -224,16 +243,19 @@
   }
 
   function updateRate(empId, val) {
+    if (!db) return;
     var rate = parseFloat(val);
     if (!isNaN(rate) && rate >= 0) db.collection("employees").doc(empId).update({ hourlyRate: rate });
   }
 
   function removeEmployee(id) {
+    if (!db) return;
     if (!confirm("Remove this employee?")) return;
     db.collection("employees").doc(id).delete().then(loadRoster);
   }
 
   function loadRoster() {
+    if (!db) { document.getElementById("roster").innerHTML = "<p style='color:#aaa;'>Database not connected</p>"; return; }
     db.collection("employees").get().then(function(snap) {
       var el = document.getElementById("roster");
       if (snap.empty) { el.innerHTML = "<p style='color:#aaa;font-style:italic;'>No employees yet.</p>"; return; }
@@ -253,6 +275,8 @@
           "</tr>";
       });
       el.innerHTML = "<div class='table-wrapper'><table><thead><tr><th>Name</th><th>Username</th><th>Phone</th><th>Rate</th><th></th></tr></thead><tbody>" + rows + "</tbody></table></div>";
+    }).catch(function(err) {
+      document.getElementById("roster").innerHTML = "<p style='color:#c00;'>Error loading roster: " + err.message + "</p>";
     });
   }
 
@@ -284,6 +308,7 @@
   function shiftWeek(dir) { weekOffset += dir; updateWeekLabel(); loadPayroll(); }
 
   function loadPayroll() {
+    if (!db) { document.getElementById("payroll-table").innerHTML = "<p style='color:#aaa;'>Database not connected</p>"; return; }
     updateWeekLabel();
     var range = getWeekRange(weekOffset);
     db.collection("employees").get().then(function(empSnap) {
@@ -340,6 +365,8 @@
             : "<p style='color:#aaa;font-style:italic;padding:10px'>No records this week.</p>";
           payrollData = csvRows;
         });
+    }).catch(function(err) {
+      document.getElementById("payroll-table").innerHTML = "<p style='color:#c00;'>Error loading payroll: " + err.message + "</p>";
     });
   }
 
@@ -356,6 +383,7 @@
   }
 
   function loadLogs() {
+    if (!db) { document.getElementById("all-records").innerHTML = "<p style='color:#aaa;'>Database not connected</p>"; return; }
     var nf   = document.getElementById("filter-name").value.trim().toLowerCase();
     var fv   = document.getElementById("filter-from").value;
     var tv   = document.getElementById("filter-to").value;
@@ -394,8 +422,23 @@
           html += "<div class='emp-block'><div class='emp-name'>" + (g.name || "").replace(/</g, "&lt;").replace(/>/g, "&gt;") + "</div><div class='emp-meta'><span class='badge'>" + (g.username || "").replace(/</g, "&lt;").replace(/>/g, "&gt;") + "</span> | " + (g.phone || "").replace(/</g, "&lt;").replace(/>/g, "&gt;") + "</div><div class='table-wrapper'><table style='font-size:0.75rem;'><thead><tr><th>Clock In</th><th>Clock Out</th><th>Duration</th><th>Location</th></tr></thead><tbody>" + rows + "</tbody></table></div></div>";
         }
         el.innerHTML = html;
+      }).catch(function(err) {
+        document.getElementById("all-records").innerHTML = "<p style='color:#c00;'>Error loading logs: " + err.message + "</p>";
       });
   }
+
+  // Load Firebase SDK and initialize
+  var script1 = document.createElement('script');
+  script1.src = 'https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js';
+  script1.onload = function() {
+    var script2 = document.createElement('script');
+    script2.src = 'https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js';
+    script2.onload = function() {
+      initFirebase();
+    };
+    document.head.appendChild(script2);
+  };
+  document.head.appendChild(script1);
 </script>
 </body>
 </html>
