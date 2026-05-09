@@ -6,65 +6,72 @@
   <title>Employer Dashboard</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Segoe UI', sans-serif; background: #eceff1; padding: 30px 16px; min-height: 100vh; }
-    h1 { font-size: 1.8rem; color: #222; margin-bottom: 20px; text-align: center; }
-    .card { background: white; border-radius: 14px; padding: 22px; max-width: 960px; margin: 0 auto 20px; box-shadow: 0 3px 16px rgba(0,0,0,0.09); }
-    .card h2 { margin-bottom: 14px; color: #333; font-size: 1.15rem; }
-    input, select { padding: 10px 13px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 0.95rem; width: 100%; }
-    .row { display: flex; gap: 10px; flex-wrap: wrap; }
-    .row > * { flex: 1; min-width: 140px; margin-bottom: 0; }
-    .btn { padding: 11px 22px; font-size: 0.95rem; font-weight: bold; border: none; border-radius: 9px; cursor: pointer; transition: opacity 0.2s; white-space: nowrap; }
-    .btn:hover { opacity: 0.85; }
+    body { font-family: 'Segoe UI', sans-serif; background: #eceff1; padding: 20px 12px; min-height: 100vh; }
+    h1 { font-size: 1.6rem; color: #222; margin-bottom: 16px; text-align: center; }
+    .card { background: white; border-radius: 14px; padding: 18px; max-width: 960px; margin: 0 auto 16px; box-shadow: 0 3px 16px rgba(0,0,0,0.09); }
+    .card h2 { margin-bottom: 12px; color: #333; font-size: 1.05rem; }
+    input { padding: 10px 12px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 0.95rem; width: 100%; -webkit-appearance: none; }
+    .row { display: -webkit-box; display: -ms-flexbox; display: flex; gap: 8px; -ms-flex-wrap: wrap; flex-wrap: wrap; }
+    .row > * { -webkit-box-flex: 1; -ms-flex: 1; flex: 1; min-width: 130px; margin-bottom: 0; }
+    .btn { padding: 11px 18px; font-size: 0.92rem; font-weight: bold; border: none; border-radius: 9px; cursor: pointer; -webkit-appearance: none; display: inline-block; }
     .btn-primary { background: #1565c0; color: white; }
     .btn-success { background: #2e7d32; color: white; }
-    .btn-danger { background: #e53935; color: white; font-size: 0.8rem; padding: 6px 12px; }
-    .btn-orange { background: #e65100; color: white; }
+    .btn-danger  { background: #e53935; color: white; font-size: 0.78rem; padding: 6px 10px; }
+    .btn-orange  { background: #e65100; color: white; }
     .hidden { display: none; }
-    .tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 0; }
-    .tab-btn { padding: 10px 22px; border: none; border-radius: 10px 10px 0 0; cursor: pointer; font-size: 0.95rem; font-weight: bold; background: #dce3ea; color: #555; transition: background 0.2s; }
+    .tabs { display: -webkit-box; display: -ms-flexbox; display: flex; gap: 4px; -ms-flex-wrap: wrap; flex-wrap: wrap; margin-bottom: 0; }
+    .tab-btn { padding: 9px 16px; border: none; border-radius: 8px 8px 0 0; cursor: pointer; font-size: 0.88rem; font-weight: bold; background: #dce3ea; color: #555; }
     .tab-btn.active { background: white; color: #1565c0; border-bottom: 3px solid #1565c0; }
     .tab-content { display: none; }
     .tab-content.active { display: block; }
-    table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
-    th { background: #f5f5f5; padding: 10px 9px; text-align: left; color: #555; border-bottom: 2px solid #eee; }
-    td { padding: 9px; border-bottom: 1px solid #f0f0f0; color: #333; vertical-align: middle; }
-    tr:last-child td { border-bottom: none; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+    th { background: #f5f5f5; padding: 8px; text-align: left; color: #555; border-bottom: 2px solid #eee; }
+    td { padding: 8px; border-bottom: 1px solid #f0f0f0; color: #333; vertical-align: middle; }
     .total-row { background: #e8f5e9; font-weight: bold; }
-    .grand-row { background: #1565c0; color: white; font-weight: bold; font-size: 1rem; }
+    .grand-row { background: #1565c0; font-weight: bold; }
     .grand-row td { color: white; }
-    .username-badge { background: #e3f2fd; color: #1565c0; font-weight: bold; padding: 3px 10px; border-radius: 20px; font-size: 0.82rem; font-family: monospace; }
-    .emp-block { border: 1px solid #e0e0e0; border-radius: 10px; padding: 16px; margin-bottom: 16px; }
-    .emp-name { font-size: 1.05rem; font-weight: bold; color: #1565c0; margin-bottom: 2px; }
-    .emp-meta { font-size: 0.82rem; color: #888; margin-bottom: 10px; }
-    .late-note { font-size: 0.78rem; color: #e65100; font-style: italic; }
-    .pay-summary { display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 20px; }
-    .pay-card { flex: 1; min-width: 180px; background: #f3f8ff; border-radius: 12px; padding: 16px; text-align: center; border: 1px solid #d0e4ff; }
-    .pay-card .pay-label { font-size: 0.82rem; color: #777; margin-bottom: 6px; }
-    .pay-card .pay-value { font-size: 1.5rem; font-weight: bold; color: #1565c0; }
+    .username-badge { background: #e3f2fd; color: #1565c0; font-weight: bold; padding: 2px 8px; border-radius: 20px; font-size: 0.78rem; font-family: monospace; }
+    .emp-block { border: 1px solid #e0e0e0; border-radius: 10px; padding: 14px; margin-bottom: 14px; }
+    .emp-name { font-size: 1rem; font-weight: bold; color: #1565c0; margin-bottom: 2px; }
+    .emp-meta { font-size: 0.78rem; color: #888; margin-bottom: 8px; }
+    .late-note { font-size: 0.75rem; color: #e65100; font-style: italic; }
+    .pay-summary { display: -webkit-box; display: -ms-flexbox; display: flex; -ms-flex-wrap: wrap; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; }
+    .pay-card { -webkit-box-flex: 1; -ms-flex: 1; flex: 1; min-width: 140px; background: #f3f8ff; border-radius: 10px; padding: 14px; text-align: center; border: 1px solid #d0e4ff; }
+    .pay-card .pay-label { font-size: 0.78rem; color: #777; margin-bottom: 4px; }
+    .pay-card .pay-value { font-size: 1.3rem; font-weight: bold; color: #1565c0; }
     .pay-card.highlight { background: #e8f5e9; border-color: #a5d6a7; }
     .pay-card.highlight .pay-value { color: #2e7d32; }
-    .week-nav { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
-    .week-nav button { padding: 7px 16px; border-radius: 8px; border: 1px solid #ddd; background: white; cursor: pointer; font-size: 0.9rem; }
-    .week-nav button:hover { background: #f0f0f0; }
-    .week-label { font-weight: bold; color: #333; font-size: 0.95rem; }
-    #err { color: #c00; font-size: 0.9rem; margin-top: 8px; }
-    #add-err { color: #c00; font-size: 0.88rem; margin-top: 8px; }
-    #copy-msg { font-size: 0.8rem; color: #2e7d32; margin-left: 8px; display: none; }
-    .tag-active { color: #2e7d32; font-weight: bold; font-size: 0.82rem; }
-    .rate-input { width: 80px !important; display: inline-block; margin: 0; padding: 5px 8px; font-size: 0.88rem; }
-    .filter-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; align-items: center; }
-    .filter-row input { margin: 0; flex: 1; min-width: 140px; }
-    .uname-result { margin-top: 12px; padding: 12px 16px; background: #f0f7ff; border-radius: 10px; border: 1px solid #cde; display: none; }
+    .week-nav { display: -webkit-box; display: -ms-flexbox; display: flex; -webkit-box-align: center; -ms-flex-align: center; align-items: center; gap: 10px; margin-bottom: 14px; -ms-flex-wrap: wrap; flex-wrap: wrap; }
+    .week-nav button { padding: 7px 14px; border-radius: 8px; border: 1px solid #ddd; background: white; cursor: pointer; font-size: 0.85rem; -webkit-appearance: none; }
+    .week-label { font-weight: bold; color: #333; font-size: 0.88rem; }
+    #err { color: #c00; font-size: 0.88rem; margin-top: 6px; }
+    #add-err { color: #c00; font-size: 0.85rem; margin-top: 6px; }
+    #copy-msg { font-size: 0.78rem; color: #2e7d32; margin-left: 6px; display: none; }
+    .tag-active { color: #2e7d32; font-weight: bold; font-size: 0.78rem; }
+    .rate-wrap { display: -webkit-inline-box; display: -ms-inline-flexbox; display: inline-flex; -webkit-box-align: center; -ms-flex-align: center; align-items: center; gap: 4px; }
+    .rate-input { width: 70px; margin: 0; padding: 4px 6px; font-size: 0.85rem; }
+    .filter-row { display: -webkit-box; display: -ms-flexbox; display: flex; gap: 8px; -ms-flex-wrap: wrap; flex-wrap: wrap; margin-bottom: 12px; -webkit-box-align: center; -ms-flex-align: center; align-items: center; }
+    .filter-row input { margin: 0; -webkit-box-flex: 1; -ms-flex: 1; flex: 1; min-width: 130px; }
+    .uname-result { margin-top: 10px; padding: 12px; background: #f0f7ff; border-radius: 10px; border: 1px solid #cde; display: none; }
+    @media (max-width: 480px) {
+      h1 { font-size: 1.3rem; }
+      .tab-btn { font-size: 0.78rem; padding: 8px 10px; }
+      table { font-size: 0.75rem; }
+      th, td { padding: 6px 5px; }
+    }
   </style>
 </head>
 <body>
 <h1>Employer Dashboard</h1>
+
 <div class="card" id="login-card">
   <h2>Employer Login</h2>
-  <input type="password" id="emp-pass" placeholder="Enter employer password" onkeydown="if(event.key==='Enter') employerLogin()"/>
-  <button class="btn btn-primary" onclick="employerLogin()">Login</button>
+  <input type="password" id="emp-pass" placeholder="Enter employer password"/>
+  <br/>
+  <button class="btn btn-primary" onclick="employerLogin()" style="margin-top:8px;width:100%;">Login</button>
   <div id="err"></div>
 </div>
+
 <div class="hidden" id="dashboard">
   <div class="card" style="padding-bottom:0;">
     <div class="tabs">
@@ -73,45 +80,46 @@
       <button class="tab-btn" onclick="switchTab('timelogs')">Time Logs</button>
     </div>
   </div>
+
   <div class="card tab-content active" id="tab-employees">
     <h2>Add New Employee</h2>
-    <div class="row" style="margin-bottom:10px;">
-      <input type="text" id="new-name" placeholder="Full Name"/>
-      <input type="tel" id="new-phone" placeholder="Phone Number"/>
-      <div style="display:flex;align-items:center;gap:6px;flex:1;min-width:140px;">
-        <span style="font-size:0.9rem;color:#555;">$</span>
-        <input type="number" id="new-rate" placeholder="Hourly Rate" min="0" step="0.01" style="margin:0;"/>
-        <span style="font-size:0.9rem;color:#555;">/hr</span>
-      </div>
+    <input type="text" id="new-name" placeholder="Full Name"/>
+    <input type="tel" id="new-phone" placeholder="Phone Number"/>
+    <div class="rate-wrap" style="margin-bottom:10px;">
+      <span style="font-size:0.88rem;color:#555;">$</span>
+      <input type="number" id="new-rate" placeholder="Hourly Rate" min="0" step="0.01" class="rate-input" style="width:120px;"/>
+      <span style="font-size:0.88rem;color:#555;">/hr</span>
     </div>
-    <button class="btn btn-success" onclick="addEmployee()" style="margin-top:4px;">Generate Username and Add</button>
+    <button class="btn btn-success" onclick="addEmployee()" style="width:100%;">Generate Username and Add</button>
     <div id="add-err"></div>
     <div class="uname-result" id="new-username-result">
-      <p style="font-size:0.88rem;color:#555;margin-bottom:8px;">Employee added! Share this username:</p>
-      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-        <span id="generated-uname" class="username-badge" style="font-size:1rem;padding:6px 18px;"></span>
-        <button class="btn btn-primary" style="font-size:0.82rem;padding:7px 14px;" onclick="copyUsername()">Copy</button>
+      <p style="font-size:0.85rem;color:#555;margin-bottom:8px;">Employee added! Share this username:</p>
+      <div style="display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;gap:8px;-ms-flex-wrap:wrap;flex-wrap:wrap;">
+        <span id="generated-uname" class="username-badge" style="font-size:0.95rem;padding:5px 14px;"></span>
+        <button class="btn btn-primary" style="font-size:0.78rem;padding:6px 12px;" onclick="copyUsername()">Copy</button>
         <span id="copy-msg">Copied!</span>
       </div>
     </div>
-    <hr style="margin:20px 0;border:none;border-top:1px solid #eee;"/>
+    <hr style="margin:16px 0;border:none;border-top:1px solid #eee;"/>
     <h2>Employee Roster</h2>
     <div id="roster">Loading...</div>
   </div>
+
   <div class="card tab-content" id="tab-payroll">
     <h2>Weekly Payroll</h2>
     <div class="week-nav">
       <button onclick="shiftWeek(-1)">Prev Week</button>
       <span class="week-label" id="week-label"></span>
       <button onclick="shiftWeek(1)">Next Week</button>
-      <button class="btn btn-primary" style="padding:7px 16px;font-size:0.85rem;" onclick="loadPayroll()">Refresh</button>
+      <button class="btn btn-primary" style="padding:7px 14px;font-size:0.82rem;" onclick="loadPayroll()">Refresh</button>
     </div>
     <div class="pay-summary" id="pay-summary"></div>
     <div id="payroll-table">Loading payroll...</div>
-    <div style="margin-top:16px;text-align:right;">
+    <div style="margin-top:14px;text-align:right;">
       <button class="btn btn-orange" onclick="exportPayrollCSV()">Export CSV</button>
     </div>
   </div>
+
   <div class="card tab-content" id="tab-timelogs">
     <h2>Time Logs</h2>
     <div class="filter-row">
@@ -123,149 +131,312 @@
     <div id="all-records">Click Search to load records.</div>
   </div>
 </div>
+
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getFirestore, collection, addDoc, query, where, orderBy, getDocs, doc, updateDoc, deleteDoc, Timestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-  const firebaseConfig = { apiKey: "AIzaSyAhZ3DfR8VWBAOPfqZ3wxynI587VOCq4T8", authDomain: "clock-in-clock-out-74188.firebaseapp.com", projectId: "clock-in-clock-out-74188", storageBucket: "clock-in-clock-out-74188.firebasestorage.app", messagingSenderId: "29359035149", appId: "1:29359035149:web:c344dad550ed55173a9644" };
+  import { getFirestore, collection, addDoc, query, where, orderBy, getDocs, doc, updateDoc, deleteDoc, Timestamp }
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAhZ3DfR8VWBAOPfqZ3wxynI587VOCq4T8",
+    authDomain: "clock-in-clock-out-74188.firebaseapp.com",
+    projectId: "clock-in-clock-out-74188",
+    storageBucket: "clock-in-clock-out-74188.firebasestorage.app",
+    messagingSenderId: "29359035149",
+    appId: "1:29359035149:web:c344dad550ed55173a9644"
+  };
+
   const EMPLOYER_PASSWORD = "admin1234";
-  const app = initializeApp(firebaseConfig); const db = getFirestore(app);
+  const app = initializeApp(firebaseConfig);
+  const db  = getFirestore(app);
   let weekOffset = 0;
+
   window.switchTab = function(name) {
-    document.querySelectorAll('.tab-btn').forEach((b,i) => { b.classList.toggle('active', ['employees','payroll','timelogs'][i] === name); });
-    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+    var tabs = ['employees','payroll','timelogs'];
+    var btns = document.querySelectorAll('.tab-btn');
+    for (var i = 0; i < btns.length; i++) {
+      btns[i].classList.toggle('active', tabs[i] === name);
+    }
+    var contents = document.querySelectorAll('.tab-content');
+    for (var j = 0; j < contents.length; j++) {
+      contents[j].classList.remove('active');
+    }
     document.getElementById('tab-' + name).classList.add('active');
     if (name === 'payroll') loadPayroll();
-  }
+  };
+
   window.employerLogin = function() {
-    if (document.getElementById('emp-pass').value !== EMPLOYER_PASSWORD) { document.getElementById('err').textContent = 'Incorrect password.'; return; }
+    var pass = document.getElementById('emp-pass').value;
+    if (pass !== EMPLOYER_PASSWORD) {
+      document.getElementById('err').textContent = 'Incorrect password.';
+      return;
+    }
     document.getElementById('login-card').classList.add('hidden');
     document.getElementById('dashboard').classList.remove('hidden');
-    loadRoster(); updateWeekLabel(); loadPayroll();
-  }
+    loadRoster();
+    updateWeekLabel();
+    loadPayroll();
+  };
+
   function generateUsername(fullName) {
-    const parts = fullName.trim().toLowerCase().replace(/[^a-zs]/g,'').split(/s+/);
-    return parts.length === 1 ? parts[0] + Math.floor(100 + Math.random() * 900) : parts[0] + '.' + parts[parts.length-1];
+    var parts = fullName.trim().toLowerCase().replace(/[^a-zs]/g,'').split(/s+/);
+    if (parts.length === 1) return parts[0] + Math.floor(100 + Math.random() * 900);
+    return parts[0] + '.' + parts[parts.length - 1];
   }
+
   async function ensureUniqueUsername(base) {
-    let username = base, attempt = 0;
-    while (true) { const snap = await getDocs(query(collection(db,'employees'), where('username','==',username))); if (snap.empty) return username; username = base + (++attempt); }
+    var username = base;
+    var attempt = 0;
+    while (true) {
+      var snap = await getDocs(query(collection(db,'employees'), where('username','==',username)));
+      if (snap.empty) return username;
+      attempt++;
+      username = base + attempt;
+    }
   }
+
   window.addEmployee = async function() {
-    const name = document.getElementById('new-name').value.trim();
-    const phone = document.getElementById('new-phone').value.trim();
-    const rate = parseFloat(document.getElementById('new-rate').value);
-    const errEl = document.getElementById('add-err'); errEl.textContent = '';
-    if (!name) { errEl.textContent = 'Please enter a name.'; return; }
+    var name  = document.getElementById('new-name').value.trim();
+    var phone = document.getElementById('new-phone').value.trim();
+    var rate  = parseFloat(document.getElementById('new-rate').value);
+    var errEl = document.getElementById('add-err');
+    errEl.textContent = '';
+    if (!name)  { errEl.textContent = 'Please enter a name.'; return; }
     if (!phone) { errEl.textContent = 'Please enter a phone number.'; return; }
     if (isNaN(rate) || rate < 0) { errEl.textContent = 'Please enter a valid hourly rate.'; return; }
-    const username = await ensureUniqueUsername(generateUsername(name));
-    await addDoc(collection(db,'employees'), { name, phone, username, hourlyRate: rate, createdAt: Timestamp.now(), active: true });
+    var username = await ensureUniqueUsername(generateUsername(name));
+    await addDoc(collection(db,'employees'), {
+      name: name, phone: phone, username: username,
+      hourlyRate: rate, createdAt: Timestamp.now(), active: true
+    });
     document.getElementById('generated-uname').textContent = username;
     document.getElementById('new-username-result').style.display = 'block';
-    document.getElementById('new-name').value = ''; document.getElementById('new-phone').value = ''; document.getElementById('new-rate').value = '';
+    document.getElementById('new-name').value  = '';
+    document.getElementById('new-phone').value = '';
+    document.getElementById('new-rate').value  = '';
     loadRoster();
-  }
+  };
+
   window.copyUsername = function() {
-    navigator.clipboard.writeText(document.getElementById('generated-uname').textContent).then(() => {
-      const msg = document.getElementById('copy-msg'); msg.style.display = 'inline'; setTimeout(() => msg.style.display = 'none', 2000);
-    });
-  }
+    var uname = document.getElementById('generated-uname').textContent;
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(uname).then(function() {
+        var msg = document.getElementById('copy-msg');
+        msg.style.display = 'inline';
+        setTimeout(function() { msg.style.display = 'none'; }, 2000);
+      });
+    }
+  };
+
   window.updateRate = async function(empId, newRate) {
-    const rate = parseFloat(newRate); if (isNaN(rate) || rate < 0) return;
+    var rate = parseFloat(newRate);
+    if (isNaN(rate) || rate < 0) return;
     await updateDoc(doc(db,'employees',empId), { hourlyRate: rate });
-  }
+  };
+
   window.removeEmployee = async function(id) {
-    if (!confirm('Remove this employee?')) return; await deleteDoc(doc(db,'employees',id)); loadRoster();
-  }
+    if (!confirm('Remove this employee? Their time logs will remain.')) return;
+    await deleteDoc(doc(db,'employees',id));
+    loadRoster();
+  };
+
   async function loadRoster() {
-    const snap = await getDocs(collection(db,'employees'));
-    const container = document.getElementById('roster');
-    if (snap.empty) { container.innerHTML = '<p style="color:#aaa;font-style:italic;padding:6px;">No employees added yet.</p>'; return; }
-    let rows = '';
-    snap.forEach(d => {
-      const e = d.data();
-      rows += '<tr><td>'+e.name+'</td><td><span class="username-badge">'+e.username+'</span></td><td>'+e.phone+'</td><td><div style="display:flex;align-items:center;gap:4px;"><span>$</span><input class="rate-input" type="number" min="0" step="0.01" value="'+(e.hourlyRate??'')+'" onchange="updateRate(''+d.id+'', this.value)" placeholder="0.00"/><span>/hr</span></div></td><td><span class="tag-active">Active</span></td><td><button class="btn btn-danger" onclick="removeEmployee(''+d.id+'')">Remove</button></td></tr>';
+    var snap = await getDocs(collection(db,'employees'));
+    var container = document.getElementById('roster');
+    if (snap.empty) {
+      container.innerHTML = '<p style="color:#aaa;font-style:italic;padding:6px;">No employees added yet.</p>';
+      return;
+    }
+    var rows = '';
+    snap.forEach(function(d) {
+      var e = d.data();
+      var rateVal = (e.hourlyRate !== undefined && e.hourlyRate !== null) ? e.hourlyRate : '';
+      rows += '<tr>' +
+        '<td>' + e.name + '</td>' +
+        '<td><span class="username-badge">' + e.username + '</span></td>' +
+        '<td>' + e.phone + '</td>' +
+        '<td><div class="rate-wrap"><span>$</span>' +
+        '<input class="rate-input" type="number" min="0" step="0.01" value="' + rateVal + '" onchange="updateRate('' + d.id + '',this.value)" placeholder="0.00"/>' +
+        '<span>/hr</span></div></td>' +
+        '<td><span class="tag-active">Active</span></td>' +
+        '<td><button class="btn btn-danger" onclick="removeEmployee('' + d.id + '')">Remove</button></td>' +
+        '</tr>';
     });
-    container.innerHTML = '<table><thead><tr><th>Name</th><th>Username</th><th>Phone</th><th>Hourly Rate</th><th>Status</th><th></th></tr></thead><tbody>'+rows+'</tbody></table>';
+    container.innerHTML = '<table><thead><tr><th>Name</th><th>Username</th><th>Phone</th><th>Rate</th><th>Status</th><th></th></tr></thead><tbody>' + rows + '</tbody></table>';
   }
+
   function getWeekRange(offset) {
-    const now = new Date(); const day = now.getDay();
-    const monday = new Date(now); monday.setDate(now.getDate() - ((day+6)%7) + offset*7); monday.setHours(0,0,0,0);
-    const sunday = new Date(monday); sunday.setDate(monday.getDate()+6); sunday.setHours(23,59,59,999);
-    return { monday, sunday };
+    var now  = new Date();
+    var day  = now.getDay();
+    var monday = new Date(now);
+    monday.setDate(now.getDate() - ((day + 6) % 7) + offset * 7);
+    monday.setHours(0, 0, 0, 0);
+    var sunday = new Date(monday);
+    sunday.setDate(monday.getDate() + 6);
+    sunday.setHours(23, 59, 59, 999);
+    return { monday: monday, sunday: sunday };
   }
-  function fmtDate(d) { return d.toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' }); }
+
+  function fmtDate(d) {
+    return d.toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+  }
+
   function updateWeekLabel() {
-    const { monday, sunday } = getWeekRange(weekOffset);
-    document.getElementById('week-label').textContent = 'Week of ' + fmtDate(monday) + ' - ' + fmtDate(sunday);
+    var range = getWeekRange(weekOffset);
+    document.getElementById('week-label').textContent = 'Week of ' + fmtDate(range.monday) + ' - ' + fmtDate(range.sunday);
   }
-  window.shiftWeek = function(dir) { weekOffset += dir; updateWeekLabel(); loadPayroll(); }
+
+  window.shiftWeek = function(dir) {
+    weekOffset += dir;
+    updateWeekLabel();
+    loadPayroll();
+  };
+
   window.loadPayroll = async function() {
     updateWeekLabel();
-    const { monday, sunday } = getWeekRange(weekOffset);
-    const empSnap = await getDocs(collection(db,'employees'));
-    const employees = {}; empSnap.forEach(d => { employees[d.data().username] = {...d.data(), id: d.id}; });
-    const q = query(collection(db,'timeLogs'), where('clockIn','>=',Timestamp.fromDate(monday)), where('clockIn','<=',Timestamp.fromDate(sunday)), orderBy('clockIn','asc'));
-    const logSnap = await getDocs(q);
-    const tally = {};
-    logSnap.forEach(d => { const r = d.data(); if (!r.username) return; if (!tally[r.username]) tally[r.username] = {mins:0,sessions:0}; tally[r.username].mins += r.durationMins||0; tally[r.username].sessions++; });
-    let totalGrossPay = 0, totalHours = 0, rows = '';
-    const csvRows = [['Employee','Username','Phone','Hourly Rate','Hours Worked','Regular Pay','Overtime Pay','Gross Pay']];
-    const allUsernames = new Set([...Object.keys(employees), ...Object.keys(tally)]);
-    allUsernames.forEach(username => {
-      const emp = employees[username]; if (!emp) return;
-      const data = tally[username] || {mins:0,sessions:0};
-      const totalHrs = data.mins/60; const rate = emp.hourlyRate||0;
-      const regularHrs = Math.min(totalHrs,40); const overtimeHrs = Math.max(0,totalHrs-40);
-      const regularPay = regularHrs*rate; const overtimePay = overtimeHrs*rate*1.5; const grossPay = regularPay+overtimePay;
-      totalGrossPay += grossPay; totalHours += totalHrs;
-      const otLabel = overtimeHrs > 0 ? ' (+'+overtimeHrs.toFixed(2)+'h OT)' : '';
-      rows += '<tr><td>'+emp.name+'</td><td><span class="username-badge">'+username+'</span></td><td>$'+rate.toFixed(2)+'/hr</td><td>'+fmtHrs(data.mins)+otLabel+'</td><td>$'+regularPay.toFixed(2)+'</td><td>'+(overtimePay>0?'$'+overtimePay.toFixed(2):'--')+'</td><td style="font-weight:bold;color:#2e7d32;">$'+grossPay.toFixed(2)+'</td></tr>';
-      csvRows.push([emp.name,username,emp.phone,'$'+rate.toFixed(2),totalHrs.toFixed(2),'$'+regularPay.toFixed(2),'$'+overtimePay.toFixed(2),'$'+grossPay.toFixed(2)]);
+    var range = getWeekRange(weekOffset);
+    var empSnap = await getDocs(collection(db,'employees'));
+    var employees = {};
+    empSnap.forEach(function(d) { employees[d.data().username] = Object.assign({}, d.data(), { id: d.id }); });
+    var q = query(
+      collection(db,'timeLogs'),
+      where('clockIn','>=',Timestamp.fromDate(range.monday)),
+      where('clockIn','<=',Timestamp.fromDate(range.sunday)),
+      orderBy('clockIn','asc')
+    );
+    var logSnap = await getDocs(q);
+    var tally = {};
+    logSnap.forEach(function(d) {
+      var r = d.data();
+      if (!r.username) return;
+      if (!tally[r.username]) tally[r.username] = { mins: 0, sessions: 0 };
+      tally[r.username].mins += r.durationMins || 0;
+      tally[r.username].sessions += 1;
     });
-    document.getElementById('pay-summary').innerHTML = '<div class="pay-card"><div class="pay-label">Total Employees</div><div class="pay-value">'+allUsernames.size+'</div></div><div class="pay-card"><div class="pay-label">Total Hours Worked</div><div class="pay-value">'+fmtHrs(Math.round(totalHours*60))+'</div></div><div class="pay-card highlight"><div class="pay-label">Total Gross Payroll</div><div class="pay-value">$'+totalGrossPay.toFixed(2)+'</div></div>';
-    document.getElementById('payroll-table').innerHTML = rows ? '<table><thead><tr><th>Employee</th><th>Username</th><th>Rate</th><th>Hours</th><th>Regular Pay</th><th>Overtime Pay</th><th>Gross Pay</th></tr></thead><tbody>'+rows+'</tbody><tfoot><tr class="grand-row"><td colspan="3">TOTAL PAYROLL</td><td>'+fmtHrs(Math.round(totalHours*60))+'</td><td colspan="2"></td><td>$'+totalGrossPay.toFixed(2)+'</td></tr></tfoot></table>' : '<p style="color:#aaa;font-style:italic;padding:10px">No time records this week.</p>';
-    window._payrollCSV = csvRows; window._payrollWeek = document.getElementById('week-label').textContent;
-  }
+    var totalGrossPay = 0;
+    var totalHours    = 0;
+    var rows = '';
+    var csvRows = [['Employee','Username','Phone','Hourly Rate','Hours Worked','Regular Pay','Overtime Pay','Gross Pay']];
+    var allUsernames = {};
+    var k;
+    for (k in employees) { allUsernames[k] = true; }
+    for (k in tally)     { allUsernames[k] = true; }
+    for (var username in allUsernames) {
+      var emp  = employees[username];
+      if (!emp) continue;
+      var data = tally[username] || { mins: 0, sessions: 0 };
+      var totalHrs  = data.mins / 60;
+      var rate      = emp.hourlyRate || 0;
+      var regHrs    = Math.min(totalHrs, 40);
+      var otHrs     = Math.max(0, totalHrs - 40);
+      var regPay    = regHrs * rate;
+      var otPay     = otHrs * rate * 1.5;
+      var grossPay  = regPay + otPay;
+      totalGrossPay += grossPay;
+      totalHours    += totalHrs;
+      var otLabel = otHrs > 0 ? ' (+' + otHrs.toFixed(2) + 'h OT)' : '';
+      rows += '<tr>' +
+        '<td>' + emp.name + '</td>' +
+        '<td><span class="username-badge">' + username + '</span></td>' +
+        '<td>$' + rate.toFixed(2) + '/hr</td>' +
+        '<td>' + fmtHrs(data.mins) + otLabel + '</td>' +
+        '<td>$' + regPay.toFixed(2) + '</td>' +
+        '<td>' + (otPay > 0 ? '$' + otPay.toFixed(2) : '--') + '</td>' +
+        '<td style="font-weight:bold;color:#2e7d32;">$' + grossPay.toFixed(2) + '</td>' +
+        '</tr>';
+      csvRows.push([emp.name, username, emp.phone, '$'+rate.toFixed(2), totalHrs.toFixed(2), '$'+regPay.toFixed(2), '$'+otPay.toFixed(2), '$'+grossPay.toFixed(2)]);
+    }
+    document.getElementById('pay-summary').innerHTML =
+      '<div class="pay-card"><div class="pay-label">Employees</div><div class="pay-value">' + Object.keys(allUsernames).length + '</div></div>' +
+      '<div class="pay-card"><div class="pay-label">Total Hours</div><div class="pay-value">' + fmtHrs(Math.round(totalHours * 60)) + '</div></div>' +
+      '<div class="pay-card highlight"><div class="pay-label">Total Payroll</div><div class="pay-value">$' + totalGrossPay.toFixed(2) + '</div></div>';
+    document.getElementById('payroll-table').innerHTML = rows
+      ? '<table><thead><tr><th>Employee</th><th>Username</th><th>Rate</th><th>Hours</th><th>Regular Pay</th><th>OT Pay</th><th>Gross Pay</th></tr></thead><tbody>' + rows + '</tbody><tfoot><tr class="grand-row"><td colspan="3">TOTAL</td><td>' + fmtHrs(Math.round(totalHours*60)) + '</td><td colspan="2"></td><td>$' + totalGrossPay.toFixed(2) + '</td></tr></tfoot></table>'
+      : '<p style="color:#aaa;font-style:italic;padding:10px">No records this week.</p>';
+    window._payrollCSV  = csvRows;
+    window._payrollWeek = document.getElementById('week-label').textContent;
+  };
+
   window.exportPayrollCSV = function() {
     if (!window._payrollCSV) return;
-    const csv = 'Payroll Report - ' + window._payrollWeek + '
+    var csv = 'Payroll Report - ' + (window._payrollWeek || '') + '
 
-' + window._payrollCSV.map(r => r.map(v => '"'+v+'"').join(',')).join('
+' +
+      window._payrollCSV.map(function(r) { return r.map(function(v) { return '"' + v + '"'; }).join(','); }).join('
 ');
-    const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv],{type:'text/csv'})); a.download = 'payroll.csv'; a.click();
-  }
+    var blob = new Blob([csv], { type: 'text/csv' });
+    var url  = URL.createObjectURL(blob);
+    var a    = document.createElement('a');
+    a.href   = url;
+    a.download = 'payroll.csv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
   window.loadLogs = async function() {
-    const nameFilter = document.getElementById('filter-name').value.trim().toLowerCase();
-    const fromVal = document.getElementById('filter-from').value; const toVal = document.getElementById('filter-to').value;
-    const from = fromVal ? new Date(fromVal) : (() => { const d=new Date(); d.setDate(d.getDate()-6); d.setHours(0,0,0,0); return d; })();
-    const to = toVal ? new Date(toVal+'T23:59:59') : new Date();
-    const q = query(collection(db,'timeLogs'), where('clockIn','>=',Timestamp.fromDate(from)), where('clockIn','<=',Timestamp.fromDate(to)), orderBy('clockIn','desc'));
-    const snap = await getDocs(q);
-    const container = document.getElementById('all-records');
+    var nameFilter = document.getElementById('filter-name').value.trim().toLowerCase();
+    var fromVal    = document.getElementById('filter-from').value;
+    var toVal      = document.getElementById('filter-to').value;
+    var from, to;
+    if (fromVal) {
+      from = new Date(fromVal);
+    } else {
+      from = new Date(); from.setDate(from.getDate() - 6); from.setHours(0,0,0,0);
+    }
+    if (toVal) {
+      to = new Date(toVal + 'T23:59:59');
+    } else {
+      to = new Date();
+    }
+    var q = query(
+      collection(db,'timeLogs'),
+      where('clockIn','>=',Timestamp.fromDate(from)),
+      where('clockIn','<=',Timestamp.fromDate(to)),
+      orderBy('clockIn','desc')
+    );
+    var snap = await getDocs(q);
+    var container = document.getElementById('all-records');
     if (snap.empty) { container.innerHTML = '<p style="color:#aaa;font-style:italic;padding:10px">No records found.</p>'; return; }
-    const grouped = {};
-    snap.forEach(d => {
-      const r = d.data();
-      if (nameFilter && !r.name?.toLowerCase().includes(nameFilter) && !(r.username||'').toLowerCase().includes(nameFilter)) return;
-      const key = r.username||r.phone;
-      if (!grouped[key]) grouped[key] = {name:r.name,username:r.username||'-',phone:r.phone,records:[]};
+    var grouped = {};
+    snap.forEach(function(d) {
+      var r = d.data();
+      var nameMatch = r.name ? r.name.toLowerCase().indexOf(nameFilter) !== -1 : false;
+      var userMatch = r.username ? r.username.toLowerCase().indexOf(nameFilter) !== -1 : false;
+      if (nameFilter && !nameMatch && !userMatch) return;
+      var key = r.username || r.phone;
+      if (!grouped[key]) grouped[key] = { name: r.name, username: r.username || '-', phone: r.phone, records: [] };
       grouped[key].records.push(r);
     });
     if (!Object.keys(grouped).length) { container.innerHTML = '<p style="color:#aaa;font-style:italic;padding:10px">No matching records.</p>'; return; }
-    let html = '';
-    for (const [,emp] of Object.entries(grouped)) {
-      let totalMins = 0, rows = '';
-      emp.records.forEach(r => {
-        const note = r.explanation ? '<div class="late-note">Note: '+r.explanation+'</div>' : '';
-        rows += '<tr><td>'+(r.clockIn?r.clockIn.toDate().toLocaleString():'-')+note+'</td><td>'+(r.clockOut?r.clockOut.toDate().toLocaleString():'Active')+'</td><td>'+(r.durationMins!=null?fmtHrs(r.durationMins):'-')+'</td><td style="font-size:0.75rem;color:#888">'+(r.locationIn||'-')+'</td></tr>';
-        totalMins += r.durationMins||0;
-      });
-      html += '<div class="emp-block"><div class="emp-name">'+emp.name+'</div><div class="emp-meta">Username: <span class="username-badge">'+emp.username+'</span> | '+emp.phone+'</div><table><thead><tr><th>Clock In</th><th>Clock Out</th><th>Duration</th><th>Location</th></tr></thead><tbody>'+rows+'</tbody><tfoot><tr class="total-row"><td colspan="2">Total ('+emp.records.length+' sessions)</td><td>'+fmtHrs(totalMins)+'</td><td></td></tr></tfoot></table></div>';
+    var html = '';
+    for (var key2 in grouped) {
+      var emp = grouped[key2];
+      var totalMins = 0;
+      var rows2 = '';
+      for (var i = 0; i < emp.records.length; i++) {
+        var r2 = emp.records[i];
+        var note = r2.explanation ? '<div class="late-note">Note: ' + r2.explanation + '</div>' : '';
+        var inT  = r2.clockIn  ? r2.clockIn.toDate().toLocaleString()  : '-';
+        var outT = r2.clockOut ? r2.clockOut.toDate().toLocaleString() : 'Active';
+        var dur  = (r2.durationMins !== null && r2.durationMins !== undefined) ? fmtHrs(r2.durationMins) : '-';
+        var loc  = r2.locationIn || '-';
+        totalMins += r2.durationMins || 0;
+        rows2 += '<tr><td>' + inT + note + '</td><td>' + outT + '</td><td>' + dur + '</td><td style="font-size:0.72rem;color:#888">' + loc + '</td></tr>';
+      }
+      html += '<div class="emp-block">' +
+        '<div class="emp-name">' + emp.name + '</div>' +
+        '<div class="emp-meta">Username: <span class="username-badge">' + emp.username + '</span> | ' + emp.phone + '</div>' +
+        '<table><thead><tr><th>Clock In</th><th>Clock Out</th><th>Duration</th><th>Location</th></tr></thead><tbody>' + rows2 + '</tbody>' +
+        '<tfoot><tr class="total-row"><td colspan="2">Total (' + emp.records.length + ' sessions)</td><td>' + fmtHrs(totalMins) + '</td><td></td></tr></tfoot></table></div>';
     }
     container.innerHTML = html;
+  };
+
+  function fmtHrs(m) {
+    return Math.floor(m / 60) + 'h ' + (m % 60) + 'm';
   }
-  function fmtHrs(m) { return Math.floor(m/60)+'h '+(m%60)+'m'; }
 </script>
 </body>
 </html>
