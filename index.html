@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Time Tracker - Employee</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; display: flex; flex-direction: column; align-items: center; padding: 30px 16px; min-height: 100vh; }
+    h1 { font-size: 1.8rem; color: #333; margin-bottom: 6px; }
+    #live-clock { font-size: 1rem; color: #777; margin-bottom: 24px; }
+    .card { background: white; border-radius: 16px; padding: 24px; width: 100%; max-width: 500px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); margin-bottom: 20px; }
+    .card h2 { margin-bottom: 16px; color: #444; font-size: 1.1rem; }
+    input { width: 100%; padding: 10px 14px; margin-bottom: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; }
+    .btn { width: 100%; padding: 13px; font-size: 1rem; font-weight: bold; border: none; border-radius: 10px; cursor: pointer; margin-top: 6px; transition: opacity 0.2s; }
+    .btn:hover { opacity: 0.85; }
+    .btn-primary { background: #1976d2; color: white; }
+    .btn-in { background: #43a047; color: white; }
+    .btn-out { background: #e53935; color: white; }
+    .btn-logout { background: #9e9e9e; color: white; font-size: 0.85rem; padding: 9px; margin-top: 10px; }
+    .status { text-align: center; font-weight: bold; font-size: 1rem; padding: 10px; border-radius: 8px; margin-bottom: 14px; }
+    .status.in { background: #e8f5e9; color: #2e7d32; }
+    .status.out { background: #fff3e0; color: #e65100; }
+    .alert { background: #fff9c4; border-left: 4px solid #f9a825; padding: 12px; border-radius: 8px; font-size: 0.9rem; margin-bottom: 14px; color: #555; }
+    .welcome { text-align: center; font-size: 0.95rem; color: #555; margin-bottom: 14px; padding: 8px; background: #f3f8ff; border-radius: 8px; }
+    .welcome strong { color: #1565c0; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    th { background: #f5f5f5; padding: 9px; text-align: left; color: #666; border-bottom: 2px solid #eee; }
+    td { padding: 9px; border-bottom: 1px solid #f0f0f0; color: #333; }
+    .total-row { font-weight: bold; background: #e3f2fd; }
+    .hidden { display: none; }
+    #msg { text-align: center; color: #c00; font-size: 0.9rem; margin-top: 8px; min-height: 20px; }
+    textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 0.95rem; resize: vertical; margin-bottom: 8px; }
+  </style>
+</head>
+<body>
+<h1>Time Tracker</h1>
+<div id="live-clock"></div>
+<div class="card" id="login-section">
+  <h2>Employee Login</h2>
+  <input type="text" id="emp-username" placeholder="Enter your username (e.g. john.smith)" onkeydown="if(event.key==='Enter') login()"/>
+  <button class="btn btn-primary" onclick="login()">Log In</button>
+  <div id="msg"></div>
+  <p style="margin-top:14px;font-size:0.82rem;color:#aaa;text-align:center;">Don't have a username? Ask your employer.</p>
+</div>
+<div class="card hidden" id="app-section">
+  <div id="welcome-bar" class="welcome"></div>
+  <div id="status-bar" class="status out">Clocked Out</div>
+  <div id="late-alert" class="alert hidden"></div>
+  <button class="btn btn-in" onclick="clockIn()">Clock In</button>
+  <button class="btn btn-out" onclick="clockOut()">Clock Out</button>
+  <button class="btn btn-logout" onclick="logout()">Logout</button>
+</div>
+<div class="card hidden" id="log-section">
+  <h2>My Last 7 Days</h2>
+  <div id="week-log">Loading...</div>
+</div>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, collection, addDoc, query, where, orderBy, getDocs, doc, updateDoc, Timestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  const firebaseConfig = { apiKey: "AIzaSyAhZ3DfR8VWBAOPfqZ3wxynI587VOCq4T8", authDomain: "clock-in-clock-out-74188.firebaseapp.com", projectId: "clock-in-clock-out-74188", storageBucket: "clock-in-clock-out-74188.firebasestorage.app", messagingSenderId: "29359035149", appId: "1:29359035149:web:c344dad550ed55173a9644" };
+  const SCHEDULE_START = 9; const SCHEDULE_END = 17;
+  const app = initializeApp(firebaseConfig); const db = getFirestore(app);
+  let currentUser = JSON.parse(sessionStorage.getItem('ttUser') || 'null'); let openRecordId = null;
+  setInterval(() => { document.getElementById('live-clock').textContent = new Date().toLocaleString(); }, 1000);
+  if (currentUser) showApp();
+  window.login = async function() {
+    const username = document.getElementById('emp-username').value.trim().toLowerCase();
+    const msgEl = document.getElementById('msg'); msgEl.textContent = '';
+    if (!username) { msgEl.textContent = 'Please enter your username.'; return; }
+    msgEl.textContent = 'Checking...';
+    const q = query(collection(db,'employees'), where('username','==',username));
+    const snap = await getDocs(q);
+    if (snap.empty) { msgEl.textContent = 'Username not found. Check with your employer.'; return; }
+    const empData = snap.docs[0].data();
+    currentUser = { name: empData.name, phone: empData.phone, username };
+    sessionStorage.setItem('ttUser', JSON.stringify(currentUser)); showApp();
+  }
+  window.logout = function() {
+    sessionStorage.removeItem('ttUser'); currentUser = null; openRecordId = null;
+    document.getElementById('login-section').classList.remove('hidden');
+    document.getElementById('app-section').classList.add('hidden');
+    document.getElementById('log-section').classList.add('hidden');
+    document.getElementById('emp-username').value = ''; document.getElementById('msg').textContent = '';
+  }
+  async function showApp() {
+    document.getElementById('login-section').classList.add('hidden');
+    document.getElementById('app-section').classList.remove('hidden');
+    document.getElementById('log-section').classList.remove('hidden');
+    document.getElementById('welcome-bar').innerHTML = 'Welcome, <strong>' + currentUser.name + '</strong> | @' + currentUser.username;
+    await checkOpenSession(); await loadWeekLog(); checkSchedule();
+  }
+  async function checkOpenSession() {
+    const q = query(collection(db,'timeLogs'), where('username','==',currentUser.username), where('status','==','open'));
+    const snap = await getDocs(q);
+    if (!snap.empty) { openRecordId = snap.docs[0].id; setStatusIn(snap.docs[0].data().clockIn.toDate()); } else { setStatusOut(); }
+  }
+  function checkSchedule() {
+    const now = new Date(); const day = now.getDay(); const hr = now.getHours();
+    const alertEl = document.getElementById('late-alert');
+    if (day === 0 || day === 6) return;
+    if (!openRecordId && hr >= SCHEDULE_START && hr < SCHEDULE_END) {
+      const minsLate = (hr - SCHEDULE_START) * 60 + now.getMinutes();
+      if (minsLate > 5) {
+        alertEl.textContent = 'You are ' + minsLate + ' minutes late. Please clock in and add an explanation.';
+        alertEl.classList.remove('hidden');
+        if (!document.getElementById('explain-box')) {
+          const box = document.createElement('div'); box.id = 'explain-box'; box.style.marginBottom = '10px';
+          box.innerHTML = '<p style="margin-bottom:6px;font-size:0.88rem;color:#555;">Explanation (optional):</p><textarea id="explanation" rows="2" placeholder="e.g. Traffic, appointment..."></textarea>';
+          document.getElementById('app-section').insertBefore(box, document.querySelector('.btn-in'));
+        }
+      }
+    }
+  }
+  window.clockIn = async function() {
+    if (openRecordId) { alert('Already clocked in!'); return; }
+    const pos = await getLocation(); const explanation = document.getElementById('explanation')?.value.trim() || '';
+    const ref = await addDoc(collection(db,'timeLogs'), { name: currentUser.name, phone: currentUser.phone, username: currentUser.username, clockIn: Timestamp.now(), clockOut: null, durationMins: null, status: 'open', locationIn: pos, locationOut: null, explanation });
+    openRecordId = ref.id; setStatusIn(new Date());
+    document.getElementById('late-alert').classList.add('hidden');
+    const eb = document.getElementById('explain-box'); if (eb) eb.remove(); await loadWeekLog();
+  }
+  window.clockOut = async function() {
+    if (!openRecordId) { alert('You are not clocked in!'); return; }
+    const pos = await getLocation(); const outTime = new Date();
+    const q = query(collection(db,'timeLogs'), where('username','==',currentUser.username), where('status','==','open'));
+    const snap = await getDocs(q); let durationMins = 0;
+    if (!snap.empty) { durationMins = Math.floor((outTime - snap.docs[0].data().clockIn.toDate()) / 60000); }
+    await updateDoc(doc(db,'timeLogs',openRecordId), { clockOut: Timestamp.now(), durationMins, status: 'closed', locationOut: pos });
+    openRecordId = null; setStatusOut(); await loadWeekLog();
+  }
+  async function getLocation() {
+    return new Promise(resolve => {
+      if (!navigator.geolocation) { resolve('unavailable'); return; }
+      navigator.geolocation.getCurrentPosition(p => resolve(p.coords.latitude.toFixed(5)+','+p.coords.longitude.toFixed(5)), () => resolve('denied'));
+    });
+  }
+  function setStatusIn(t) { const el = document.getElementById('status-bar'); el.textContent = 'Clocked In since ' + t.toLocaleTimeString(); el.className = 'status in'; }
+  function setStatusOut() { const el = document.getElementById('status-bar'); el.textContent = 'Clocked Out'; el.className = 'status out'; }
+  async function loadWeekLog() {
+    const d = new Date(); d.setDate(d.getDate()-6); d.setHours(0,0,0,0);
+    const q = query(collection(db,'timeLogs'), where('username','==',currentUser.username), where('clockIn','>=',Timestamp.fromDate(d)), orderBy('clockIn','desc'));
+    const snap = await getDocs(q); const container = document.getElementById('week-log');
+    if (snap.empty) { container.innerHTML = '<p style="color:#aaa;font-style:italic;">No records this week.</p>'; return; }
+    let totalMins = 0, rows = '';
+    snap.forEach(r => {
+      const data = r.data();
+      rows += '<tr><td>'+(data.clockIn?data.clockIn.toDate().toLocaleString():'-')+'</td><td>'+(data.clockOut?data.clockOut.toDate().toLocaleString():'Active')+'</td><td>'+(data.durationMins!=null?Math.floor(data.durationMins/60)+'h '+(data.durationMins%60)+'m':'-')+'</td><td style="font-size:0.75rem;color:#888">'+(data.locationIn||'-')+'</td></tr>';
+      totalMins += data.durationMins || 0;
+    });
+    container.innerHTML = '<table><thead><tr><th>Clock In</th><th>Clock Out</th><th>Duration</th><th>Location</th></tr></thead><tbody>'+rows+'</tbody><tfoot><tr class="total-row"><td colspan="2">7-Day Total</td><td>'+Math.floor(totalMins/60)+'h '+(totalMins%60)+'m</td><td></td></tr></tfoot></table>';
+  }
+</script>
+</body>
+</html>
