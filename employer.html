@@ -50,7 +50,6 @@
     #err, #add-err { color: #c00; font-size: 0.85rem; margin-top: 6px; }
     #copy-msg { font-size: 0.78rem; color: #2e7d32; margin-left: 6px; }
     .table-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-    .debug { color: #999; font-size: 0.75rem; margin-top: 8px; background: #f9f9f9; padding: 8px; border-radius: 4px; }
   </style>
 </head>
 <body>
@@ -61,7 +60,6 @@
   <input type="password" id="emp-pass" placeholder="Enter employer password"/>
   <button class="btn btn-primary btn-full" onclick="employerLogin()">Login</button>
   <div id="err"></div>
-  <div class="debug">Password: admin1234</div>
 </div>
 
 <div class="hidden" id="dashboard">
@@ -168,10 +166,10 @@
 
   function employerLogin() {
     var pass = document.getElementById("emp-pass").value;
-    console.log('Login attempt with password length:', pass.length);
+    console.log('Login attempt');
     if (pass !== EMPLOYER_PASSWORD) {
-      document.getElementById("err").textContent = "Incorrect password. Expected: admin1234";
-      console.log('Password mismatch. Got: "' + pass + '" Expected: "' + EMPLOYER_PASSWORD + '"');
+      document.getElementById("err").textContent = "Incorrect password.";
+      console.log('Password mismatch');
       return;
     }
     console.log('Login successful');
